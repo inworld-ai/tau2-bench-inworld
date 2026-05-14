@@ -1,7 +1,10 @@
 import json
 from copy import deepcopy
 
-from tau2.config import DEFAULT_LLM_EVAL_USER_SIMULATOR
+from tau2.config import (
+    DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
+    DEFAULT_LLM_EVAL_USER_SIMULATOR,
+)
 from tau2.data_model.message import (
     AssistantMessage,
     Message,
@@ -419,6 +422,7 @@ class UserOnlyReviewer:
             model=DEFAULT_LLM_EVAL_USER_SIMULATOR,
             messages=messages,
             call_name="llm_judge_user_only_review",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
         )
 
         try:
@@ -516,6 +520,7 @@ class FullDuplexUserOnlyReviewer:
             model=DEFAULT_LLM_EVAL_USER_SIMULATOR,
             messages=llm_messages,
             call_name="llm_judge_user_only_streaming_review",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
         )
 
         try:

@@ -156,6 +156,59 @@ Text-mode agent + judge stay on Claude (`claude-sonnet-4-6` / `claude-opus-4-7`)
 since those paths aren't exercised by the voice runs and Claude is a strong
 default for text tool-use.
 
+### Wall-clock watchdog for audio-native runs (post-initial fork)
+Each tau2 task has a simulated-time cap (`--max-steps-seconds`, defaulting to
+300s), but if the orchestrator's tick loop fails to advance the simulated clock
+(both sides silent, audio plumbing hang, etc.) the loop can wall-clock forever.
+The base `Orchestrator` already had a `_check_timeout()` that uses
+`time.perf_counter()` against a `timeout` constructor arg, but the CLI
+defaulted that arg to `None`. We now default it to `2 × max_steps_seconds`
+whenever `--audio-native` is set, so a single stuck simulation can't starve
+the whole batch. Explicit `--timeout` still wins; text-mode runs are
+unaffected.
+
+Touched files: `src/tau2/cli.py`.
+
+### Evaluator hardening (post-initial fork)
+A 40-task retail voice eval was killed mid-run because two tasks burned 10,000s
+and 15,727s of wall-clock each. Root cause turned out to be **after** the
+orchestrator returned, not inside it: `evaluator_nl_assertions.py:127` did a
+bare `json.loads()` on the eval LLM's response, and on very long voice
+transcripts the Inworld-routed `claude-sonnet-4-6` was returning empty content,
+crashing the parse. The exception propagated up to the runner's 4-attempt
+retry loop, and each retry called `generate()` → `litellm.completion()` with
+`num_retries=3` and **no `timeout`** — so a single hung LLM call could wait
+hours, multiplied by every retry. Three concurrent workers all stuck in I/O.
+
+Three coordinated fixes:
+
+1. **Defensive parse** — `evaluator_nl_assertions.py` now wraps the
+   `json.loads()` in a try/except via the existing
+   `extract_json_from_llm_response()` helper. On failure, the function returns
+   `met=False` with a `eval_parse_failed:<exc>` justification for each
+   assertion instead of crashing the whole task.
+2. **Per-call timeout** — every `generate()` invocation in the evaluator /
+   reviewer / auth-classifier paths now passes
+   `timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS` (=120s, new constant in
+   `config.py`). Worst case per eval call: 3 retries × 120s = 360s, vs.
+   unbounded previously.
+3. **Model swap for NL assertions** — `DEFAULT_LLM_NL_ASSERTIONS` moved from
+   `inworld/anthropic/claude-sonnet-4-6` to `inworld/openai/gpt-5.4-mini`. The
+   empty-content artifact correlated with very long retail transcripts + that
+   specific routed model; gpt-5.4-mini also matches what we use for the agent
+   and user simulator so the eval and the participants share a model family.
+
+Together these three eliminate the "one stuck task starves the batch for
+hours" failure mode. The wall-clock watchdog above is the last-resort safety
+net; these fixes prevent the runaway from happening in the first place.
+
+Touched files: `src/tau2/config.py`,
+`src/tau2/evaluator/evaluator_nl_assertions.py`,
+`src/tau2/evaluator/auth_classifier.py`,
+`src/tau2/evaluator/hallucination_reviewer.py`,
+`src/tau2/evaluator/review_llm_judge.py`,
+`src/tau2/evaluator/review_llm_judge_user_only.py`.
+
 ### Env / docs / metadata (Step 5)
 - `.env.example` collapsed to a single required key (`INWORLD_API_KEY`) at
   the top, with the legacy provider keys moved to a clearly-marked

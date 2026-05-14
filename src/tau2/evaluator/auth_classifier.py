@@ -15,7 +15,10 @@ from loguru import logger
 from rich.console import Console
 from rich.panel import Panel
 
-from tau2.config import DEFAULT_LLM_EVAL_USER_SIMULATOR
+from tau2.config import (
+    DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
+    DEFAULT_LLM_EVAL_USER_SIMULATOR,
+)
 from tau2.data_model.message import SystemMessage, Tick, UserMessage
 from tau2.data_model.simulation import AuthenticationClassification
 from tau2.utils.display import MarkdownDisplay
@@ -142,6 +145,7 @@ class AuthenticationClassifier:
                 UserMessage(role="user", content=user_prompt),
             ],
             call_name="classify_authentication",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
         )
 
         # Parse response
@@ -186,6 +190,7 @@ class FullDuplexAuthenticationClassifier:
                 UserMessage(role="user", content=user_prompt),
             ],
             call_name="classify_authentication",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
         )
 
         # Parse response

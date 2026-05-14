@@ -123,13 +123,17 @@ The default voice-eval stack (no flags required beyond `--audio-native --audio-n
 | Realtime TTS engine | `inworld-tts-2` | `DEFAULT_INWORLD_TTS_MODEL` |
 | Realtime voice | `Jason` | `DEFAULT_INWORLD_VOICE` |
 | Semantic VAD eagerness | `low` | `DEFAULT_INWORLD_EAGERNESS` |
+| In-session realtime STT | `soniox/stt-rt-v4` (`en`) | `DEFAULT_INWORLD_REALTIME_STT_MODEL` / `_LANGUAGE` |
 | User-sim LLM (decisions) | `inworld/openai/gpt-5.4-mini` | `DEFAULT_LLM_USER` |
 | User-sim TTS | `inworld-tts-2` @ 16kHz | `DEFAULT_INWORLD_TTS_MODEL_ID` |
-| Agent-side STT | `inworld/inworld-stt-1` | `DEFAULT_TRANSCRIPTION_MODEL` |
+| Post-hoc agent-side STT | `inworld-stt` (= `inworld/inworld-stt-1`) | `DEFAULT_TRANSCRIPTION_MODEL` |
 | Text-mode agent | `inworld/anthropic/claude-sonnet-4-6` | `DEFAULT_LLM_AGENT` |
 | Text-mode user-sim | `inworld/openai/gpt-5.4-mini` | `DEFAULT_LLM_USER` |
-| Judge (NL assertions) | `inworld/anthropic/claude-opus-4-7` | `DEFAULT_LLM_EVAL_USER_SIMULATOR` |
-| Max sim duration | 300s | `DEFAULT_MAX_STEPS_SECONDS` |
+| NL-assertions evaluator | `inworld/openai/gpt-5.4-mini` | `DEFAULT_LLM_NL_ASSERTIONS` |
+| Judge (LLM review) | `inworld/anthropic/claude-opus-4-7` | `DEFAULT_LLM_EVAL_USER_SIMULATOR` |
+| Max simulated duration | 300s | `DEFAULT_MAX_STEPS_SECONDS` |
+| Wall-clock watchdog (voice) | `2 × max-steps-seconds` (default 600s) | CLI default when `--audio-native` and `--timeout` unset |
+| Per-call eval LLM timeout | 120s | `DEFAULT_LLM_EVAL_TIMEOUT_SECONDS` |
 
 ### Customizing models
 

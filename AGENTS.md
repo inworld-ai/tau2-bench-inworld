@@ -201,6 +201,29 @@ different STTs** — one for in-session realtime perception (what the agent
    This is the STT to tune when the agent's misinterpreting spelled-out IDs
    / names — *not* the post-hoc one in (3).
 
+### Evaluator-path patterns (don't reintroduce these bug classes)
+
+The evaluator / reviewer / auth-classifier modules run *after* the orchestrator
+has already returned, so they sit outside the orchestrator's wall-clock
+watchdog. Two patterns are non-negotiable in this codepath:
+
+1. **Always pass `timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS`** (`config.py`,
+   120s) on every `generate()` call. Without it, a hung Inworld-router
+   `litellm.completion()` × `num_retries=3` × `runner retries=4` can wall-clock
+   a single task for hours. Three workers all blocked on litellm I/O held the
+   GIL long enough to skip the 30-second progress heartbeat in a real run.
+2. **Always defensively parse the eval LLM's response.** Use
+   `extract_json_from_llm_response()` from `tau2.utils.llm_utils` to strip
+   markdown fences, wrap the `json.loads()` in a try/except, and return a
+   degraded result instead of propagating. Empty / non-JSON eval responses
+   are a real failure mode on long voice transcripts and must not crash the
+   simulation.
+
+Touched files that follow both patterns (mirror their shape):
+`src/tau2/evaluator/evaluator_nl_assertions.py`,
+`auth_classifier.py`, `hallucination_reviewer.py`, `review_llm_judge.py`,
+`review_llm_judge_user_only.py`.
+
 All Inworld defaults are in `src/tau2/config.py` under the "INWORLD PROVIDER" section
 plus the top-level `DEFAULT_LLM_*` constants. Voice-pipeline-specific defaults
 (`DEFAULT_VOICE_SYNTHESIS_PROVIDER`, `DEFAULT_TRANSCRIPTION_MODEL`) live in

@@ -1,7 +1,10 @@
 import json
 from typing import Literal
 
-from tau2.config import DEFAULT_LLM_EVAL_USER_SIMULATOR
+from tau2.config import (
+    DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
+    DEFAULT_LLM_EVAL_USER_SIMULATOR,
+)
 from tau2.data_model.message import SystemMessage, Tick, UserMessage
 from tau2.data_model.simulation import Review, ReviewError, UserInfo
 from tau2.data_model.tasks import Task
@@ -508,6 +511,7 @@ class ConversationReviewer:
             model=DEFAULT_LLM_EVAL_USER_SIMULATOR,
             messages=messages,
             call_name="llm_judge_review",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
         )
 
         try:
@@ -619,6 +623,7 @@ class FullDuplexConversationReviewer:
             model=DEFAULT_LLM_EVAL_USER_SIMULATOR,
             messages=llm_messages,
             call_name="llm_judge_streaming_review",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
         )
 
         try:

@@ -141,7 +141,13 @@ def add_run_args(parser):
         "--timeout",
         type=float,
         default=None,
-        help="Maximum wallclock time in seconds for each simulation. No timeout by default.",
+        help=(
+            "Maximum wallclock time in seconds for each simulation. "
+            "No timeout by default for text mode. For audio-native (voice) "
+            "runs, defaults to 2 × --max-steps-seconds if not set explicitly "
+            "(prevents stuck-task runaway when the orchestrator tick loop "
+            "fails to advance simulated time)."
+        ),
     )
     parser.add_argument(
         "--save-to",
@@ -626,6 +632,19 @@ def main():
 
         set_llm_log_mode(args.llm_log_mode)
 
+        # Wall-clock watchdog for voice runs: if --timeout wasn't explicitly
+        # passed and we're in audio-native mode, cap each simulation's wall
+        # clock at 2 × max_steps_seconds. The simulated-time cap (max_steps
+        # × tick_duration) bounds the in-conversation clock, but if the
+        # orchestrator's tick loop fails to advance the simulated clock for
+        # any reason (e.g., both sides silent, audio plumbing hang, retry
+        # path stalls), the tick loop can wall-clock forever. The base
+        # orchestrator's existing _check_timeout() handles this once a
+        # non-None timeout is passed — we just need a sensible default.
+        effective_timeout = args.timeout
+        if effective_timeout is None and args.audio_native:
+            effective_timeout = 2.0 * float(args.max_steps_seconds)
+
         # Shared config kwargs
         shared_kwargs = dict(
             domain=args.domain,
@@ -637,7 +656,7 @@ def main():
             llm_args_user=args.user_llm_args,
             num_trials=args.num_trials,
             max_errors=args.max_errors,
-            timeout=args.timeout,
+            timeout=effective_timeout,
             save_to=args.save_to,
             max_concurrency=args.max_concurrency,
             seed=args.seed,

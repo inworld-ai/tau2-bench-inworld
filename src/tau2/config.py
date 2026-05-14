@@ -24,7 +24,12 @@ DEFAULT_LLM_TEMPERATURE_USER = 0.0
 DEFAULT_LLM_ARGS_AGENT = {"temperature": DEFAULT_LLM_TEMPERATURE_AGENT}
 DEFAULT_LLM_ARGS_USER = {"temperature": DEFAULT_LLM_TEMPERATURE_USER}
 
-DEFAULT_LLM_NL_ASSERTIONS = "inworld/anthropic/claude-sonnet-4-6"
+# Swapped off claude-sonnet-4-6 because that model + the Inworld router
+# returned empty content on very long voice-transcript prompts, crashing the
+# json.loads in evaluator_nl_assertions.py (now also defensively wrapped).
+# gpt-5.4-mini matches what we already use for the agent + user simulator
+# so the eval and the participants share a model family.
+DEFAULT_LLM_NL_ASSERTIONS = "inworld/openai/gpt-5.4-mini"
 DEFAULT_LLM_NL_ASSERTIONS_TEMPERATURE = 0.0
 DEFAULT_LLM_NL_ASSERTIONS_ARGS = {"temperature": DEFAULT_LLM_NL_ASSERTIONS_TEMPERATURE}
 
@@ -45,6 +50,14 @@ DEFAULT_RETRY_ATTEMPTS = 3
 DEFAULT_RETRY_MIN_WAIT = 1.0  # seconds
 DEFAULT_RETRY_MAX_WAIT = 10.0  # seconds
 DEFAULT_RETRY_MULTIPLIER = 1.0  # exponential backoff multiplier
+
+# Per-call timeout (seconds) for LLM calls in the evaluator / reviewer /
+# auth-classifier paths. These calls happen *after* the orchestrator has
+# already finished, so the orchestrator's wall-clock watchdog doesn't cover
+# them — a single hung litellm completion can stall a task for hours and
+# starve the whole batch. 120s per attempt × DEFAULT_MAX_RETRIES (3) caps
+# the worst case at ~6 min per eval call.
+DEFAULT_LLM_EVAL_TIMEOUT_SECONDS = 120.0
 
 # LiteLLM cache
 LLM_CACHE_ENABLED = False

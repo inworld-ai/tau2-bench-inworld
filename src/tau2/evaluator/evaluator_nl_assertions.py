@@ -1,16 +1,22 @@
 import json
 
+from loguru import logger
+
 from tau2.agent.base.streaming import (
     LinearizationStrategy,
     ParticipantTick,
     linearize_ticks,
 )
-from tau2.config import DEFAULT_LLM_NL_ASSERTIONS, DEFAULT_LLM_NL_ASSERTIONS_ARGS
+from tau2.config import (
+    DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
+    DEFAULT_LLM_NL_ASSERTIONS,
+    DEFAULT_LLM_NL_ASSERTIONS_ARGS,
+)
 from tau2.data_model.message import Message, SystemMessage, Tick, UserMessage
 from tau2.data_model.simulation import NLAssertionCheck, RewardInfo
 from tau2.data_model.tasks import RewardType, Task
 from tau2.evaluator.evaluator_base import EvaluatorBase
-from tau2.utils.llm_utils import generate
+from tau2.utils.llm_utils import extract_json_from_llm_response, generate
 
 
 class NLAssertionsEvaluator(EvaluatorBase[Message]):
@@ -122,9 +128,30 @@ class NLAssertionsEvaluator(EvaluatorBase[Message]):
             model=DEFAULT_LLM_NL_ASSERTIONS,
             messages=messages,
             call_name="nl_assertions_eval",
+            timeout=DEFAULT_LLM_EVAL_TIMEOUT_SECONDS,
             **DEFAULT_LLM_NL_ASSERTIONS_ARGS,
         )
-        result_data = json.loads(assistant_message.content)
+        # Tolerate empty / malformed / markdown-wrapped JSON from the eval
+        # LLM. A single bad response previously crashed the whole task
+        # and exhausted its 4-attempt retry budget against the same
+        # hung model — see FORK_NOTES.md "NL-assertions safety" section.
+        raw = assistant_message.content or ""
+        try:
+            result_data = json.loads(extract_json_from_llm_response(raw))
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.error(
+                "NL assertions eval returned unparseable content "
+                f"(len={len(raw)}, error={type(e).__name__}: {e}). "
+                "Falling back to all-failed for these assertions."
+            )
+            return [
+                NLAssertionCheck(
+                    nl_assertion=assertion,
+                    met=False,
+                    justification=f"eval_parse_failed: {type(e).__name__}",
+                )
+                for assertion in nl_assertions
+            ]
         return [
             NLAssertionCheck(
                 nl_assertion=result["expectedOutcome"],
