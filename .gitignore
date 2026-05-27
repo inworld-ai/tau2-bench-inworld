@@ -20,10 +20,6 @@ data/annotations/
 # framework only reads task definitions under data/tau2/domains/ and
 # data/tau2/user_simulator/, both of which we still commit.
 data/tau2/results/
-# tau2-bench-inworld: drop upstream's marketing/blog audio assets — the
-# corresponding HTML pages have <audio> tags that simply won't load, no
-# code path depends on these files.
-web/leaderboard/public/blog/audio/
 src/experiments/model_serving/vllm_serving/.*
 .ruff_cache
 

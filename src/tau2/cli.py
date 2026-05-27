@@ -524,15 +524,12 @@ def run_intro():
         "tau2 play", "Interactive manual mode \u2014 play the agent yourself"
     )
     cmd_table.add_row("tau2 domain <name>", "Show detailed documentation for a domain")
-    cmd_table.add_row("tau2 leaderboard", "Display the current leaderboard")
     cmd_table.add_row(
         "tau2 review <path>", "Run LLM-based conversation review on results"
     )
     cmd_table.add_row(
         "tau2 evaluate-trajs <paths>", "Re-evaluate trajectories and recompute rewards"
     )
-    cmd_table.add_row("tau2 submit prepare", "Prepare a leaderboard submission")
-    cmd_table.add_row("tau2 submit validate", "Validate a submission directory")
     cmd_table.add_row("tau2 check-data", "Verify data directory is set up correctly")
     cmd_table.add_row("tau2 start", "Start background servers")
     cmd_table.add_row("tau2 intro", "Show this page")
@@ -554,10 +551,7 @@ def run_intro():
         "tau2 run --domain retail --audio-native --num-tasks 1 --verbose-logs\n"
         "\n"
         "# 4. Browse results\n"
-        "tau2 view\n"
-        "\n"
-        "# 5. Check the leaderboard\n"
-        "tau2 leaderboard"
+        "tau2 view"
     )
     console.print(
         Panel(
@@ -831,92 +825,6 @@ def main():
     )
     review_parser.set_defaults(func=lambda args: run_review(args))
 
-    # Leaderboard command
-    leaderboard_parser = subparsers.add_parser(
-        "leaderboard", help="Show the tau-bench leaderboard"
-    )
-    leaderboard_parser.add_argument(
-        "--domain",
-        "-d",
-        type=str,
-        choices=["retail", "airline", "telecom", "banking_knowledge"],
-        default=None,
-        help="Show leaderboard for a specific domain. If not specified, shows overall leaderboard.",
-    )
-    leaderboard_parser.add_argument(
-        "--metric",
-        "-m",
-        type=str,
-        choices=["pass_1", "pass_2", "pass_3", "pass_4", "cost"],
-        default="pass_1",
-        help="Metric to rank by. Default is 'pass_1'.",
-    )
-    leaderboard_parser.add_argument(
-        "--limit",
-        "-n",
-        type=int,
-        default=None,
-        help="Limit the number of entries to show.",
-    )
-    leaderboard_parser.set_defaults(func=lambda args: run_leaderboard(args))
-
-    # Submit command with subcommands
-    submit_parser = subparsers.add_parser(
-        "submit", help="Submission management for the leaderboard"
-    )
-    submit_subparsers = submit_parser.add_subparsers(
-        dest="submit_command", help="Submit subcommands", required=True
-    )
-
-    # Submit prepare subcommand
-    submit_prepare_parser = submit_subparsers.add_parser(
-        "prepare", help="Prepare a submission for the leaderboard"
-    )
-    submit_prepare_parser.add_argument(
-        "input_paths",
-        nargs="+",
-        help="Paths to trajectory files, directories, or glob patterns",
-    )
-    submit_prepare_parser.add_argument(
-        "--output",
-        "-o",
-        required=True,
-        help="Output directory to save the submission and trajectories",
-    )
-    submit_prepare_parser.add_argument(
-        "--no-verify",
-        action="store_true",
-        help="Skip trajectory verification step",
-    )
-    submit_prepare_parser.add_argument(
-        "--voice",
-        action="store_true",
-        default=None,
-        help="Force voice submission mode (auto-detected from input data if not specified)",
-    )
-    submit_prepare_parser.set_defaults(func=lambda args: run_prepare_submission(args))
-
-    # Submit validate subcommand
-    submit_validate_parser = submit_subparsers.add_parser(
-        "validate", help="Validate an existing submission directory"
-    )
-    submit_validate_parser.add_argument(
-        "submission_dir",
-        help="Path to the submission directory to validate",
-    )
-    submit_validate_parser.set_defaults(func=lambda args: run_validate_submission(args))
-
-    # Submit verify-trajs subcommand
-    submit_verify_parser = submit_subparsers.add_parser(
-        "verify-trajs", help="Verify trajectory files"
-    )
-    submit_verify_parser.add_argument(
-        "paths",
-        nargs="+",
-        help="Paths to trajectory files, directories, or glob patterns",
-    )
-    submit_verify_parser.set_defaults(func=lambda args: run_verify_trajectories(args))
-
     # Convert results format command
     convert_parser = subparsers.add_parser(
         "convert-results",
@@ -977,21 +885,6 @@ def run_check_data():
     from tau2.scripts.check_data import main as check_data_main
 
     check_data_main()
-
-
-def run_verify_trajectories(args):
-    import sys
-
-    from loguru import logger
-
-    from tau2.scripts.leaderboard.verify_trajectories import (
-        VerificationMode,
-        verify_trajectories,
-    )
-
-    logger.configure(handlers=[{"sink": sys.stderr, "level": "ERROR"}])
-
-    verify_trajectories(args.paths, VerificationMode.PUBLIC)
 
 
 def run_evaluate_trajectories(args):
@@ -1059,40 +952,10 @@ def run_review(args):
         )
 
 
-def run_prepare_submission(args):
-    """Run the prepare submission command."""
-    from tau2.scripts.leaderboard.prepare_submission import prepare_submission
-
-    prepare_submission(
-        input_paths=args.input_paths,
-        output_dir=args.output,
-        run_verification=not args.no_verify,
-        voice=args.voice if args.voice else None,
-    )
-
-
-def run_validate_submission(args):
-    """Run the validate submission command."""
-    from tau2.scripts.leaderboard.prepare_submission import validate_submission
-
-    validate_submission(submission_dir=args.submission_dir)
-
-
 def run_manual_mode():
     from tau2.scripts.manual_mode import main as manual_main
 
     manual_main()
-
-
-def run_leaderboard(args):
-    """Show the tau-bench leaderboard."""
-    from tau2.scripts.leaderboard.leaderboard import show_leaderboard
-
-    show_leaderboard(
-        domain=args.domain,
-        metric=args.metric,
-        limit=args.limit,
-    )
 
 
 def run_convert_results(args):

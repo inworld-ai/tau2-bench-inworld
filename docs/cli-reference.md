@@ -238,45 +238,6 @@ Text runs default to monolithic JSON; voice runs default to directory-based form
 
 ---
 
-## `tau2 leaderboard` — View Leaderboard
-
-Show the τ-bench leaderboard in the terminal.
-
-```bash
-tau2 leaderboard
-```
-
-| Option | Description |
-|--------|-------------|
-| `--domain`, `-d` | Show leaderboard for a specific domain: `retail`, `airline`, `telecom`, or `banking_knowledge` |
-| `--metric`, `-m` | Metric to rank by: `pass_1`, `pass_2`, `pass_3`, `pass_4`, `cost` (default: `pass_1`) |
-| `--limit`, `-n` | Limit the number of entries shown |
-
----
-
-## `tau2 submit` — Leaderboard Submission
-
-See the full [Leaderboard Submission Guide](leaderboard-submission.md).
-
-```bash
-# Prepare a submission
-tau2 submit prepare <paths...> --output ./my_submission
-
-# Prepare a voice submission (auto-detected, or force with --voice)
-tau2 submit prepare <paths...> --output ./my_submission --voice
-
-# Skip trajectory verification during preparation
-tau2 submit prepare <paths...> --output ./my_submission --no-verify
-
-# Validate a submission
-tau2 submit validate <submission_dir> [--mode public|private]
-
-# Verify trajectory files
-tau2 submit verify-trajs <paths...> [--mode public|private]
-```
-
----
-
 ## Environment CLI (beta)
 
 An interactive CLI for directly querying and testing domain environments.

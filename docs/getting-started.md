@@ -69,15 +69,11 @@ Copy `.env.example` as `.env` and edit it to include your API keys:
 cp .env.example .env
 ```
 
-### Voice API Keys (for voice-enabled features)
-
-If you're using voice features, add the following to your `.env` file:
-- `ELEVENLABS_API_KEY` — for voice synthesis
-- `DEEPGRAM_API_KEY` — for voice transcription
-
 ### Voice Persona Setup (for voice-enabled features)
 
-The voice pipeline uses ElevenLabs voices for the user simulator. The default voice IDs are Sierra-internal and won't work for external users. You need to create your own voices and configure them via environment variables in your `.env` file:
+In this fork the voice user simulator uses [Inworld TTS](https://platform.inworld.ai/) out of the box. Each persona ships with an Inworld voice ID from the public catalog, so with only `INWORLD_API_KEY` set the default voices work immediately — no extra setup required.
+
+To swap any persona's voice, set the matching environment variable in your `.env` file:
 
 ```bash
 TAU2_VOICE_ID_MATT_DELANEY=your_voice_id_here
@@ -85,7 +81,7 @@ TAU2_VOICE_ID_LISA_BRENNER=your_voice_id_here
 # ... (one per persona)
 ```
 
-See the [Voice Persona Setup Guide](voice-personas.md) for step-by-step instructions on creating matching voices using ElevenLabs Voice Design.
+See the [Voice Persona Setup Guide](voice-personas.md) for the full persona → voice mapping. The legacy ElevenLabs synthesis and Deepgram transcription backends remain available as opt-in alternatives (`ELEVENLABS_API_KEY`, `DEEPGRAM_API_KEY`).
 
 ## Running Your First Evaluation
 
@@ -100,7 +96,7 @@ Results are saved in `data/simulations/`.
 
 ### Audio native mode (voice full-duplex)
 
-> **Prerequisite:** Voice mode requires custom ElevenLabs voices for the user simulator. You must set these up before running voice evaluations. See the [Voice Persona Setup Guide](voice-personas.md) — the automated script takes care of everything in one command.
+> **Note:** With `INWORLD_API_KEY` set, the user simulator's default Inworld voices work out of the box — no extra setup needed. See the [Voice Persona Setup Guide](voice-personas.md) to customize them.
 
 ```bash
 tau2 run --domain retail --audio-native --num-tasks 1 --verbose-logs

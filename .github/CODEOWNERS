@@ -1,6 +1,6 @@
 # Syntax: path  @github-username or @github-team
 # Example: Assign a user to all files
-*       @victorb-sierra
+*       @inworld-ai/devops
 
 # Assign a team to a folder
 # src/    @your-org/team-name

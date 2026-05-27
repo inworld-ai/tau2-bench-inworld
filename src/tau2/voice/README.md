@@ -104,7 +104,7 @@ The voice module has two main components:
 
 - **`audio_native/`** — Real-time provider adapters (OpenAI, Gemini, xAI). Each provider implements a `DiscreteTimeAdapter` that bridges the provider's streaming API to the tick-based simulation. See [audio_native/README.md](audio_native/README.md) for architecture details.
 
-- **`synthesis/`** — User simulator speech generation. Converts user text to audio via ElevenLabs TTS, applies audio effects (background noise, burst sounds, frame drops), and converts to telephony format (G.711 μ-law 8kHz).
+- **`synthesis/`** — User simulator speech generation. Converts user text to audio via Inworld TTS by default (ElevenLabs available as a legacy backend), applies audio effects (background noise, burst sounds, frame drops), and converts to telephony format (G.711 μ-law 8kHz).
 
 - **`transcription/`** — Speech-to-text for evaluation. Supports Deepgram (nova-2, nova-3) and OpenAI (whisper-1, gpt-4o-transcribe, gpt-4o-mini-transcribe).
 
@@ -112,9 +112,9 @@ The voice module has two main components:
 
 ## Voice Persona Setup
 
-The user simulator uses ElevenLabs voices defined in `src/tau2/data_model/voice_personas.py`. The default voice IDs are Sierra-internal and **will not work** for external users.
+The user simulator uses voices defined in `src/tau2/data_model/voice_personas.py`. In this fork each persona ships with an Inworld voice ID from the public catalog, so with only `INWORLD_API_KEY` set the default voices work out of the box — no extra setup.
 
-To run voice evaluations, create your own voices in ElevenLabs and configure them via environment variables:
+To swap any persona's voice, set the matching environment variable:
 
 ```bash
 # In your .env file:
@@ -123,9 +123,7 @@ TAU2_VOICE_ID_LISA_BRENNER=your_voice_id_here
 # ... (one per persona)
 ```
 
-For a minimal setup, create just the two control personas and use `--speech-complexity control`.
-
-See the [Voice Persona Setup Guide](../../docs/voice-personas.md) for step-by-step instructions on creating matching voices with ElevenLabs Voice Design.
+See the [Voice Persona Setup Guide](../../docs/voice-personas.md) for the persona → voice mapping. Each persona also retains its upstream ElevenLabs voice ID, but those are Sierra-internal and **will not work** for external users — ElevenLabs is supported only as a legacy opt-in synthesis backend.
 
 ## Environment Variables
 
@@ -134,10 +132,10 @@ See the [Voice Persona Setup Guide](../../docs/voice-personas.md) for step-by-st
 | `OPENAI_API_KEY` | OpenAI Realtime provider |
 | `GOOGLE_API_KEY` | Gemini Live provider |
 | `XAI_API_KEY` | xAI Grok Voice provider |
-| `INWORLD_API_KEY` | Inworld Realtime provider (base64 key from Inworld Portal) |
+| `INWORLD_API_KEY` | Inworld Realtime provider and default user-simulator TTS/STT (base64 key from Inworld Portal) |
 | `INWORLD_MODEL` | Inworld LLM backbone override (e.g. `openai/gpt-4.1-mini`) |
 | `INWORLD_VOICE` | Inworld TTS voice override (e.g. `Clive`) |
 | `INWORLD_TTS_MODEL` | Inworld TTS engine override (e.g. `inworld-tts-1.5-mini`) |
-| `ELEVENLABS_API_KEY` | User simulator TTS (synthesis) |
-| `DEEPGRAM_API_KEY` | Transcription (Deepgram nova-2, nova-3) |
+| `ELEVENLABS_API_KEY` | User simulator TTS (synthesis) — legacy backend |
+| `DEEPGRAM_API_KEY` | Transcription (Deepgram nova-2, nova-3) — legacy backend |
 | `TAU2_VOICE_ID_*` | Custom voice ID overrides (see [Voice Persona Setup](../../docs/voice-personas.md)) |
