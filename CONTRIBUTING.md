@@ -102,8 +102,8 @@ new-stuff
 ### 1. Environment Setup
 ```bash
 # Clone your fork
-git clone https://github.com/your-username/tau2-bench.git
-cd tau2-bench
+git clone https://github.com/your-username/tau2-bench-inworld.git
+cd tau2-bench-inworld
 
 # Install with dev tools (pytest, ruff, pre-commit — required for committing)
 uv sync --extra dev
@@ -275,7 +275,7 @@ For `src/experiments/` contributions:
 There are two types of agent contributions:
 
 #### Core Agents (`src/tau2/agent/`)
-Core agents are part of the official tau2 framework and are maintained by Sierra. Core agent contributions:
+Core agents are part of the upstream tau2 framework (maintained by Sierra Research). For this Inworld fork, core-agent changes:
 - Require thorough review and approval
 - Must implement `HalfDuplexAgent` or `FullDuplexAgent`
 - Are registered in `src/tau2/registry.py`
