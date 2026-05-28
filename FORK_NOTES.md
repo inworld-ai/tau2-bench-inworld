@@ -239,8 +239,7 @@ Touched files: `src/tau2/config.py`,
 
 ## Upstream relationship
 
-This fork started from tau2-bench at the commit checked out in
-`/Users/cale/code/tau2-bench/` on the day of the fork (2026-05-12). It
+This fork started from tau2-bench on the day of the fork (2026-05-12). It
 inherits all task definitions, agent/user/judge harness code, voice-effects
 pipeline, and CLI from upstream — only the *provider plumbing* changed.
 

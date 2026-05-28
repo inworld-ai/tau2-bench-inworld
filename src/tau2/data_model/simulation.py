@@ -1341,9 +1341,8 @@ class SimulationIndexEntry(BaseModel):
     """Lightweight summary of a simulation for the dir-format index.
 
     Stored in results.json alongside metadata so that external consumers
-    (e.g. the web leaderboard) can access simulation summaries without
-    fetching individual simulation files. Also used for integrity
-    validation on load.
+    can access simulation summaries without fetching individual simulation
+    files. Also used for integrity validation on load.
     """
 
     id: str

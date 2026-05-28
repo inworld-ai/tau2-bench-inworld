@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- Leaderboard website now fetches submission and trajectory data from S3 (`sierra-tau-bench-public`) instead of serving from GitHub Pages directly
 
 ### Deprecated
 
@@ -164,29 +163,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Interactive play mode (`tau2 play`) supporting both agent and user roles
 - Possibility to strictly enforce communication protocol rules (e.g., no mixed messages with text and tool calls)
 
-## [0.2.0] - 2025-10-06
-
-### Added
-- Web-based leaderboard system with interactive submission management
-- GitHub Pages deployment for leaderboard with automated CI/CD
-- Comprehensive submission validation and verification system
-- Model comparison interface with performance metrics visualization
-- Trajectory visualization in web interface
-- Mobile-responsive leaderboard design
-- Logo assets and branding for multiple LLM providers
-- Live leaderboard deployment at tau-bench.com
-
-### Changed
-- Enhanced submission manifest structure
-- Improved image handling and asset management
-- Updated deployment workflow for better reliability
-
-### Fixed
-- Mobile view responsiveness issues
-- Missing submissions from manifest
-- Image path resolution for GitHub Pages deployment
-- Base URL handling for subdirectory deployment
-
 ## [0.1.3] - 2025-08-26
 
 ### Fixed
@@ -246,6 +222,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Links
 - [Repository](https://github.com/sierra-research/tau2-bench)
-- [Leaderboard](https://tau-bench.com)
 - [Paper](https://arxiv.org/abs/2506.07982)
 - [Blog Post](https://sierra.ai/blog/benchmarking-agents-in-collaborative-real-world-scenarios)

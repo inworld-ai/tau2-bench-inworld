@@ -32,83 +32,6 @@ See the [Gym Documentation](src/tau2/gym/README.md) for detailed usage examples 
 
 ---
 
-## Version 0.2.0 - Web-Based Leaderboard 🌐
-
-**Release Date**: October 6, 2025
-
-### 🌟 Major New Feature: Live Leaderboard
-
-We're excited to announce the biggest addition to τ-bench since launch - a comprehensive web-based leaderboard system that's now live!
-
-#### 🚀 What's New
-- **Interactive Leaderboard**: Browse and compare model performance across all domains
-- **Live at tau-bench.com**: Fully deployed and accessible to the community
-- **Submission Management**: Easy submission validation and verification process
-- **Trajectory Visualization**: Explore conversation flows and agent decisions
-- **Mobile Support**: Full responsive design for viewing on any device
-- **Automated Deployment**: GitHub Pages integration with CI/CD pipeline
-- **Professional Branding**: Logo assets for all major LLM providers
-
-#### 🔧 For Researchers & Developers
-- Submit your results directly through the web interface
-- Visual comparison of model performance metrics across domains
-- Export functionality for research papers and presentations
-- Direct links to submission data and trajectories
-- Real-time leaderboard updates with new submissions
-
-#### 🌍 Community Impact
-The leaderboard at **tau-bench.com** makes τ-bench results accessible to:
-- Researchers comparing agent performance
-- Industry practitioners evaluating models
-- Academic institutions teaching agent evaluation
-- Open source community building better agents
-
-### 🛠️ Technical Improvements
-- **Enhanced Infrastructure**: Robust deployment pipeline
-- **Better Asset Management**: Optimized image loading and branding
-- **Mobile Optimization**: Responsive design across all devices
-- **Improved Validation**: More comprehensive submission checking
-
-### 🚀 Getting Started with the Leaderboard
-
-1. **Visit**: [tau-bench.com](https://tau-bench.com)
-2. **Explore**: Browse current model rankings and performance
-3. **Submit**: Follow the submission guide to add your model
-4. **Compare**: Analyze how your agent performs against others
-
-### 📊 Submission Process
-
-Ready to showcase your agent? Our submission system makes it easy:
-
-```bash
-# Run complete evaluation on all domains
-tau2 run --domain retail --agent-llm your-model --user-llm gpt-4 --num-trials 4
-tau2 run --domain airline --agent-llm your-model --user-llm gpt-4 --num-trials 4  
-tau2 run --domain telecom --agent-llm your-model --user-llm gpt-4 --num-trials 4
-
-# Prepare submission
-tau2 submit prepare data/simulations/your_results*.json --output ./my_submission
-
-# Validate before submitting
-tau2 submit validate ./my_submission
-```
-
-### ⚡ Performance & Reliability
-- **Fast Loading**: Optimized for quick access to results
-- **Mobile-First**: Designed for accessibility on any device
-- **Always Available**: Robust hosting ensures consistent uptime
-- **Regular Updates**: Automatic deployment of new features
-
-### 📈 What's Next
-
-With the leaderboard now live, we're focusing on:
-- Enhanced trajectory analysis tools
-- More sophisticated evaluation metrics
-- Additional domain support
-- Community-driven features and improvements
-
----
-
 ## Version 0.1.3 - Stability & Performance 🔧
 
 **Release Date**: August 26, 2025
@@ -248,4 +171,4 @@ tau2 run --domain airline --agent-llm gpt-4 --user-llm gpt-4 --num-trials 1 --nu
 
 ---
 
-*Ready to benchmark your conversational agents? Visit [tau-bench.com](https://tau-bench.com) to see the leaderboard and get started with τ-bench today!*
+*Ready to benchmark your conversational agents? Get started with τ-bench today!*

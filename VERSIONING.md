@@ -104,7 +104,6 @@ For urgent releases or when automation isn't available:
 
 2. **Manual Follow-up**
    - Update `RELEASE_NOTES.md` with user-friendly content
-   - Update leaderboard at tau-bench.com if needed
    - Social media announcements for major releases
    - Blog posts for significant features
 
@@ -150,7 +149,7 @@ When manually updating `CHANGELOG.md`, use these standardized categories:
 - Agent performance visualization dashboard
 
 ### Changed
-- Improved error messages in submission validation
+- Improved error messages in task validation
 - Updated default LLM timeout from 30s to 60s
 
 ### Fixed

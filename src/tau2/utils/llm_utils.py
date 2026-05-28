@@ -126,7 +126,14 @@ def get_response_cost(response: ModelResponse) -> float:
     try:
         cost = completion_cost(completion_response=response)
     except Exception as e:
-        logger.error(e)
+        # LiteLLM's price catalog doesn't cover every model we route through
+        # the Inworld gateway (e.g. claude-sonnet-4-6). Treat un-cataloged
+        # models as a soft telemetry miss (cost=0) instead of spamming ERROR
+        # on every call. Real errors still log at ERROR.
+        if "isn't mapped yet" in str(e):
+            logger.debug("Cost unavailable for model %s: %s", response.model, e)
+        else:
+            logger.error(e)
         return 0.0
     return cost
 
