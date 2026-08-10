@@ -51,6 +51,8 @@ dependencies = [
     "requests>=2.31.0",
     "numpy>=1.24.0",
     "httpx>=0.24.0",
+    # stdlib audioop was removed in Python 3.13; LTS backport keeps voice paths importable
+    "audioop-lts>=0.2.1; python_version >= '3.13'",
 ]
 
 [project.optional-dependencies]
