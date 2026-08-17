@@ -38,22 +38,44 @@ class AirlineTools(ToolKitBase):  # Tools
         super().__init__(db)
 
     def _get_user(self, user_id: str) -> User:
-        """Get user from database."""
-        if user_id not in self.db.users:
-            raise ValueError(f"User {user_id} not found")
-        return self.db.users[user_id]
+        """Get user from database.
+
+        Falls back to lowercase lookup so voice agents that capitalize the
+        ID after the user spells it letter-by-letter still resolve. DB
+        invariant: user IDs are stored lowercase.
+        """
+        if user_id in self.db.users:
+            return self.db.users[user_id]
+        lowered = user_id.lower()
+        if lowered in self.db.users:
+            return self.db.users[lowered]
+        raise ValueError(f"User {user_id} not found")
 
     def _get_reservation(self, reservation_id: str) -> Reservation:
-        """Get reservation from database."""
-        if reservation_id not in self.db.reservations:
-            raise ValueError(f"Reservation {reservation_id} not found")
-        return self.db.reservations[reservation_id]
+        """Get reservation from database.
+
+        Falls back to uppercase lookup. DB invariant: reservation IDs are
+        stored uppercase.
+        """
+        if reservation_id in self.db.reservations:
+            return self.db.reservations[reservation_id]
+        uppered = reservation_id.upper()
+        if uppered in self.db.reservations:
+            return self.db.reservations[uppered]
+        raise ValueError(f"Reservation {reservation_id} not found")
 
     def _get_flight(self, flight_number: str) -> Flight:
-        """Get flight from database."""
-        if flight_number not in self.db.flights:
-            raise ValueError(f"Flight {flight_number} not found")
-        return self.db.flights[flight_number]
+        """Get flight from database.
+
+        Falls back to uppercase lookup. DB invariant: flight numbers are
+        stored uppercase.
+        """
+        if flight_number in self.db.flights:
+            return self.db.flights[flight_number]
+        uppered = flight_number.upper()
+        if uppered in self.db.flights:
+            return self.db.flights[uppered]
+        raise ValueError(f"Flight {flight_number} not found")
 
     def _get_flight_instance(self, flight_number: str, date: str) -> FlightDateStatus:
         """Get flight instance from database."""
