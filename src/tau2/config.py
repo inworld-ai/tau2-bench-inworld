@@ -211,9 +211,9 @@ DEFAULT_QWEN_OUTPUT_SAMPLE_RATE = 24000  # fixed, API-defined
 # INWORLD PROVIDER (overridable model/voice, fixed API constants)
 # =============================================================================
 DEFAULT_INWORLD_REALTIME_URL = "wss://api.inworld.ai/api/v1/realtime/session"  # fixed
-DEFAULT_INWORLD_MODEL = "openai/gpt-5.4-mini"  # overridable LLM backbone
+DEFAULT_INWORLD_MODEL = "openai/gpt-5.5"  # overridable LLM backbone
 DEFAULT_INWORLD_TTS_MODEL = "inworld-tts-2"  # overridable TTS engine
-DEFAULT_INWORLD_VOICE = "Jason"  # overridable
+DEFAULT_INWORLD_VOICE = "Sarah"  # overridable
 DEFAULT_INWORLD_EAGERNESS = "low"  # overridable: auto, low, medium, high
 # In-session STT model used by the realtime API to transcribe the user's
 # audio for the agent. Goes into ``audio.input.transcription`` in the
